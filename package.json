@@ -1,13 +1,16 @@
 {
-    "name": "top.mashiros.widget.todo",
+    "name": "top.mashiros.widget.genshinclock",
     "version": "1.0.0",
     
     "title": {
-        "en": "ToDo-Plugin",
-        "zh": "ToDo"
+        "en": "Genshin Clock Widget",
+        "zh": "原神时钟挂件"
     },
 
-    "description": "Audio data visualization plugin for SAO Utils",
+    "description": {
+        "en": "Genshin Style Clock Widget for SAO Utils 2",
+        "zh": "用于SAO Utils 2的原神风格时钟挂件"
+    },
 
     "author": {
         "name": "Mashiro_Sorata",
@@ -23,13 +26,23 @@
 
     "resources": [
         {
-            "location": "/widget",
+            "location": "/widget/main-clock",
             "catalog": "widget",
             "title": {
-                "en": "Todo-Widget",
-                "zh": "Todo挂件"
+                "en": "Genshin Clock Widget",
+                "zh": "原神时钟挂件"
             },
-            "entry": "shape.qml"
+            "preview": "preview.png",
+            "entry": "qml/MainClock.qml"
+        },
+        {
+            "location": "/widget/text-clock",
+            "catalog": "widget",
+            "title": {
+                "en": "Genshin Text Clock Widget",
+                "zh": "原神文字时钟挂件"
+            },
+            "entry": "qml/TextClock.qml"
         }
     ]
 }
