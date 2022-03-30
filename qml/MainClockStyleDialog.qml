@@ -9,6 +9,8 @@ NVG.Window {
     id: window
     title: qsTr("Clock Settings")
     visible: true
+    x: widget.NVG.View.x + widget.width
+    y: widget.NVG.View.y
     minimumWidth: 450
     minimumHeight: 500
     width: minimumWidth
@@ -101,9 +103,11 @@ NVG.Window {
                                 stepSize: 1
                                 defaultValue: 30
                                 displayValue: value + "%"
+                                enabled: _cfg_particle_visible.value
                             }
 
                             P.SwitchPreference {
+                                id: _cfg_particle_visible
                                 name: "Particle Visible"
                                 label: qsTr("Particle Visible")
                                 defaultValue: true
@@ -139,7 +143,7 @@ NVG.Window {
                         P.SwitchPreference {
                             name: "Reverse Clock Hand"
                             label: qsTr("Reverse Clock Hand")
-                            visible: !(_cfg_genshin_style.value && _cfg_single_clock_hand.value)
+                            visible: !_cfg_genshin_style.value
                             enabled: visible
                             defaultValue: false
                         }

@@ -15,16 +15,26 @@ T.Widget {
     title: qsTr("Genshin Clock Widget")
 
     property real thour: 0
-    property real t12hour: 0
     property real tmin: 0
     property real tsec: 0
 
     readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Performance and Effectiveness":0,"Performance Settings":{"FPS of Gears":10,"Particle Speed":30,"Particle Visible":true},"Genshin Style":true,"Full Clock":false,"Single Clock Hand":true,"Reverse Clock Hand":false,"Background Visible":true,"Background Opacity":100,"Gear Opacity":55}
+    readonly property var alarms: widget.settings.alarm ? widget.settings.alarm : {}
     readonly property real gear_opacity: configs["Gear Opacity"]/100
 
     readonly property real mtime: thour*60+tmin
     readonly property real size: Math.min(width, height)
     property real g0_rotation: 1080
+
+    property bool alarm_modify: false
+    property real hourhand_anime_rotation: 0
+    property real minhand_anime_rotation: 0
+    property real alarm_initial_angle: 0
+
+    FontLoader {
+        id: genshinFont;
+        source: "../Fonts/hk4e_zh-cn.ttf"
+    }
 
     Item {
         anchors.fill: parent
@@ -239,7 +249,7 @@ T.Widget {
             cache: true
             anchors.centerIn: parent
             source: "../Images/UI_Clock_MinuteHand.png"
-            visible: !(configs["Genshin Style"] && configs["Single Clock Hand"])
+            visible: !(configs["Genshin Style"] && configs["Single Clock Hand"]) || alarm_modify
         }
 
         Image {
@@ -251,43 +261,69 @@ T.Widget {
             source: "../Images/UI_Clock_HourHand.png"
 
             Rectangle {
-                x: 452
-                y: 274
-                width: 120
-                height: 240
+                x: 452-15
+                y: 274-40
+                width: 150
+                height: 200
                 color: "red"
                 opacity: 0.5
                 MouseArea {
                     anchors.fill: parent
-                    property bool isdragging: false
-                    cursorShape: pressed ? Qt.SizeAllCursor : Qt.ArrowCursor
-                    onPressed: {
-                        console.log("pressed!");
-                    }
-                    
+                    cursorShape: (alarm_modify && pressed) ? Qt.SizeAllCursor : Qt.ArrowCursor
+                    enabled: alarm_modify && !hourhand_anime.running
                     onPositionChanged: {
+                        if (!alarm_modify)
+                            return;
                         if (!pressed)
-                                return;
-                        const date = new Date;
-                        alarmDialog.item.setTime(date);
+                            return;
+//                        let point = mapToItem(hour_hand, mouse.x, mouse.y);
+//                        let diffX = (point.x - hour_hand.width/2);
+
+//                        let opoint = mapToItem(clock_anchors, mouse.x, mouse.y);
+//                        let odiffX = (opoint.x - clock_anchors.width/2);
+//                        let odiffY = (opoint.y - clock_anchors.height/2);
+//                        let odeg = (Math.atan(odiffY/odiffX) * 180 / Math.PI);
+//                        if (odiffX > 0) {
+//                            hour_hand.rotation = 90 + odeg;
+//                        } else if(odiffX < 0) {
+//                            hour_hand.rotation = 270 + odeg;
+//                        } else {
+//                            if (odiffY > 0) {
+//                                hour_hand.rotation = 180;
+//                            } else {
+//                                hour_hand.rotation = 0;
+//                            }
+//                        }
+//                        if (diffX > 0 && hour_hand.rotation >= alarm_initial_angle) {
+//                            hour_hand.rotation = alarm_initial_angle;
+//                        } else if (diffX < 0 && hour_hand.rotation <= alarm_initial_angle) {
+//                            hour_hand.rotation = alarm_initial_angle;
+//                        }
+//                        console.log(diffX);
+//                        console.log(alarm_initial_angle);
+//                        console.log(hour_hand.rotation);
                         let point = mapToItem(hour_hand, mouse.x, mouse.y);
-                        let diffX = (point.x - hour_hand.width/2); 
+                        let diffX = (point.x - hour_hand.width/2);
                         let diffY = -1 * (point.y - hour_hand.height/2);
                         let rad = Math.atan (diffY/diffX);
                         let deg = (rad * 180/Math.PI);
-                        // if (diffX > 0 && diffY > 0) { 
-                        //     rect.rotation = 90 - Math.abs (deg); 
-                        // } 
-                        // else if (diffX > 0 && diffY < 0) { 
-                        //     rect.rotation = 90 + Math.abs (deg); 
-                        // } 
-                        // else if (diffX < 0 && diffY > 0) { 
-                        //     rect.rotation = 270 + Math.abs (deg); 
-                        // } 
-                        // else if (diffX < 0 && diffY < 0) { 
-                        //     rect.rotation = 270 - Math.abs (deg); 
-                        // } 
-
+                        let delta_deg = 0;
+                        if (diffX > 0) {
+                            delta_deg = 90 - Math.abs (deg);
+                        } else if (diffX < 0) {
+                            delta_deg = -90 + Math.abs (deg);
+                        }
+                        let temp_hour_rotation = hour_hand.rotation + delta_deg;
+                        console.log(temp_hour_rotation);
+                        if ((temp_hour_rotation - alarm_initial_angle) > 0 && (temp_hour_rotation - alarm_initial_angle) <= 360) {
+                            hour_hand.rotation = temp_hour_rotation;
+                            let date = new Date();
+                            date.setHours(0, 4*(hour_hand.rotation-180));
+                            alarmDialog.item.setTime(date);
+                            // console.log(hour_hand.rotation);
+                        } else {
+                            // console.log("out of range");
+                        }
                     }
                 }
             }
@@ -309,39 +345,88 @@ T.Widget {
 
     }
 
+    RotationAnimation{
+        id: hourhand_anime
+        target: hour_hand
+        to: hourhand_anime_rotation//180+15*thour+tmin*0.25+tsec*0.004167
+//        direction: RotationAnimation.Clockwise
+        easing.type: Easing.InOutQuad
+        duration: 600
+        running: false
+        // onRunningChanged: {
+        //     if (!running) {
+        //         hour_hand.rotation = hourhand_anime_rotation % 360;
+        //     }
+        // }
+    }
+
+    RotationAnimation{
+        id: minhand_anime
+        target: min_hand
+        to: minhand_anime_rotation//15*thour+tmin*0.25+tsec*0.004167
+//        direction: RotationAnimation.Shortest
+        easing.type: Easing.InOutQuad
+        duration: 600
+        running: false
+    }
+
+    function handAnimeRotation() {
+        if (configs["Genshin Style"]) {
+            if (configs["Single Clock Hand"]) {
+                hourhand_anime_rotation = 180+15*thour+tmin*0.25+tsec*0.004167;
+            } else {
+                hourhand_anime_rotation = 180+15*thour+tmin*0.25+tsec*0.004167;
+                minhand_anime_rotation = tmin*6+tsec*0.1;
+            }
+        } else {
+            let full_clock = configs["Full Clock"];
+            if (!configs["Reverse Clock Hand"]) {
+                minhand_anime_rotation = (180+tmin*6+tsec*0.1) % 360;
+                hourhand_anime_rotation = ((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
+            } else {
+                minhand_anime_rotation = 180+((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
+                hourhand_anime_rotation = tmin*6+tsec*0.1;
+            }
+        }
+        hourhand_anime.direction = RotationAnimation.Shortest;
+        hourhand_anime.start();
+        minhand_anime.direction = RotationAnimation.Shortest;
+        minhand_anime.start();
+    }
+
+    onConfigsChanged: {
+        handAnimeRotation();
+    }
+
     Timer {
         interval: 500
-        running: widget.NVG.View.exposed
+        running: widget.NVG.View.exposed && !hourhand_anime.running && !minhand_anime.running
         repeat: true
         onTriggered: {
             var now = new Date();
             tsec = now.getSeconds();
             tmin = now.getMinutes();
             thour = now.getHours();
-
-            if (configs["Genshin Style"]) {
-                if (configs["Single Clock Hand"]) {
-                    hour_hand.rotation = 180+15*thour+tmin*0.25+tsec*0.004167;
-                } else {
-                    if (!configs["Reverse Clock Hand"]) {
+            if (!alarm_modify) {
+                if (configs["Genshin Style"]) {
+                    if (configs["Single Clock Hand"]) {
+                        hour_hand.rotation = 180+15*thour+tmin*0.25+tsec*0.004167;
+                    } else {
                         hour_hand.rotation = 180+15*thour+tmin*0.25+tsec*0.004167;
                         min_hand.rotation = tmin*6+tsec*0.1;
+                    }
+                } else {
+                    let full_clock = configs["Full Clock"];
+                    if (!configs["Reverse Clock Hand"]) {
+                        min_hand.rotation = 180+tmin*6+tsec*0.1;
+                        hour_hand.rotation = ((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
                     } else {
-                        hour_hand.rotation = 180+tmin*6+tsec*0.1;
-                        min_hand.rotation = 15*thour+tmin*0.25+tsec*0.004167;
+                        min_hand.rotation = 180+((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
+                        hour_hand.rotation = tmin*6+tsec*0.1;
                     }
                 }
             } else {
-                let full_clock = configs["Full Clock"];
-                if (!full_clock)
-                    t12hour = thour > 12 ? thour - 12 : thour;
-                if (!configs["Reverse Clock Hand"]) {
-                    min_hand.rotation = 180+tmin*6+tsec*0.1;
-                    hour_hand.rotation = ((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
-                } else {
-                    min_hand.rotation = 180+((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
-                    hour_hand.rotation = tmin*6+tsec*0.1;
-                }
+//                configs["Alarm Time"]
             }
         }
     }
@@ -349,26 +434,38 @@ T.Widget {
     menu: Menu {
         Action {
             text: qsTr("Settings") + "..."
-            onTriggered: styleDialog.active = true
+            enabled: !alarmDialog.active
+            onTriggered: {
+                styleDialog.active = true;
+            }
         }
 
         Action {
             text: qsTr("Alarm Clock") + "..."
-            onTriggered: alarmDialog.active = true
+            enabled: !styleDialog.active
+            onTriggered: {
+                alarmDialog.active = true;
+                let date = new Date(alarms["Alarm Time"]);
+                minhand_anime_rotation = (15*date.getHours()+date.getMinutes()*0.25+date.getSeconds()*0.004167) % 360;
+                minhand_anime.direction = RotationAnimation.Shortest;
+                minhand_anime.start();
+                hourhand_anime_rotation = (180+minhand_anime_rotation) % 360;
+                hourhand_anime.direction = RotationAnimation.Shortest;
+                hourhand_anime.start();
+                alarm_initial_angle = (hourhand_anime_rotation);
+            }
         }
     }
 
     Loader {
         id: alarmDialog
         active: false
-        sourceComponent: MainAlarmDialog {
-            
-        }
+        sourceComponent: MainClockAlarmDialog {}
     }
 
     Loader {
         id: styleDialog
         active: false
-        sourceComponent: MainClockDialog {}
+        sourceComponent: MainClockStyleDialog {}
     }
 }
