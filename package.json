@@ -1,0 +1,35 @@
+{
+    "name": "top.mashiros.widget.todo",
+    "version": "1.0.0",
+    
+    "title": {
+        "en": "ToDo-Plugin",
+        "zh": "ToDo"
+    },
+
+    "description": "Audio data visualization plugin for SAO Utils",
+
+    "author": {
+        "name": "Mashiro_Sorata",
+        "email": "mashiro_sorata@qq.com",
+        "url": "http://www.mashiros.top/"
+    },
+
+    "engines": {
+        "qt": "~5",
+        "qt.quick": ">=2.12",
+        "nvg.api": "~1"
+    },
+
+    "resources": [
+        {
+            "location": "/widget",
+            "catalog": "widget",
+            "title": {
+                "en": "Todo-Widget",
+                "zh": "Todo挂件"
+            },
+            "entry": "shape.qml"
+        }
+    ]
+}
