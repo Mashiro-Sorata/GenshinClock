@@ -164,6 +164,30 @@ T.Widget {
                 }
             }
 
+            Rectangle {
+                width: 536
+                height: 536
+                anchors.centerIn: parent
+                color: "transparent"
+                layer.enabled: true
+                layer.effect: OpacityMask{
+                    maskSource: Image{
+                        width: 536
+                        height: 536
+                        source: "../Images/UI_Clock_TimeZone.png"
+                    }
+                }
+
+                Image {
+                    width: 1200
+                    height: 1200
+                    cache: true
+                    anchors.centerIn: parent
+                    source: "../Images/UI_Clock_TimeZoneColor.png"
+                    autoTransform: true
+                }
+            }
+
             AnimatedImage {
                 width: 540
                 height: 540
@@ -265,7 +289,7 @@ T.Widget {
                 y: 274-40
                 width: 150
                 height: 200
-                color: "red"
+                color: "transparent"//"red"
                 opacity: 0.5
                 MouseArea {
                     anchors.fill: parent
@@ -276,32 +300,6 @@ T.Widget {
                             return;
                         if (!pressed)
                             return;
-//                        let point = mapToItem(hour_hand, mouse.x, mouse.y);
-//                        let diffX = (point.x - hour_hand.width/2);
-
-//                        let opoint = mapToItem(clock_anchors, mouse.x, mouse.y);
-//                        let odiffX = (opoint.x - clock_anchors.width/2);
-//                        let odiffY = (opoint.y - clock_anchors.height/2);
-//                        let odeg = (Math.atan(odiffY/odiffX) * 180 / Math.PI);
-//                        if (odiffX > 0) {
-//                            hour_hand.rotation = 90 + odeg;
-//                        } else if(odiffX < 0) {
-//                            hour_hand.rotation = 270 + odeg;
-//                        } else {
-//                            if (odiffY > 0) {
-//                                hour_hand.rotation = 180;
-//                            } else {
-//                                hour_hand.rotation = 0;
-//                            }
-//                        }
-//                        if (diffX > 0 && hour_hand.rotation >= alarm_initial_angle) {
-//                            hour_hand.rotation = alarm_initial_angle;
-//                        } else if (diffX < 0 && hour_hand.rotation <= alarm_initial_angle) {
-//                            hour_hand.rotation = alarm_initial_angle;
-//                        }
-//                        console.log(diffX);
-//                        console.log(alarm_initial_angle);
-//                        console.log(hour_hand.rotation);
                         let point = mapToItem(hour_hand, mouse.x, mouse.y);
                         let diffX = (point.x - hour_hand.width/2);
                         let diffY = -1 * (point.y - hour_hand.height/2);
@@ -314,15 +312,11 @@ T.Widget {
                             delta_deg = -90 + Math.abs (deg);
                         }
                         let temp_hour_rotation = hour_hand.rotation + delta_deg;
-                        console.log(temp_hour_rotation);
                         if ((temp_hour_rotation - alarm_initial_angle) > 0 && (temp_hour_rotation - alarm_initial_angle) <= 360) {
                             hour_hand.rotation = temp_hour_rotation;
                             let date = new Date();
                             date.setHours(0, 4*(hour_hand.rotation-180));
                             alarmDialog.item.setTime(date);
-                            // console.log(hour_hand.rotation);
-                        } else {
-                            // console.log("out of range");
                         }
                     }
                 }
@@ -348,23 +342,16 @@ T.Widget {
     RotationAnimation{
         id: hourhand_anime
         target: hour_hand
-        to: hourhand_anime_rotation//180+15*thour+tmin*0.25+tsec*0.004167
-//        direction: RotationAnimation.Clockwise
+        to: hourhand_anime_rotation
         easing.type: Easing.InOutQuad
         duration: 600
         running: false
-        // onRunningChanged: {
-        //     if (!running) {
-        //         hour_hand.rotation = hourhand_anime_rotation % 360;
-        //     }
-        // }
     }
 
     RotationAnimation{
         id: minhand_anime
         target: min_hand
-        to: minhand_anime_rotation//15*thour+tmin*0.25+tsec*0.004167
-//        direction: RotationAnimation.Shortest
+        to: minhand_anime_rotation
         easing.type: Easing.InOutQuad
         duration: 600
         running: false

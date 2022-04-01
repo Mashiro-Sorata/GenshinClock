@@ -94,16 +94,47 @@ NVG.Window {
                         function setHanime(time, direction) {
                             let date = new Date(time);
                             let _thour = date.getHours();
+                            let _thour_rotation = (15*(_thour-12)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
                             if (_thour >= 18) {
-                                hourhand_anime_rotation = (15*(_thour-12)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
-                                console.log("hourhand_anime_rotation: " + hourhand_anime_rotation);
-                            } else if (_thour >= 12) {
-                                hourhand_anime_rotation = (180+15*(_thour)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
-                                
-                            } else  {
-                                hourhand_anime_rotation = (180+15*(_thour)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
+                                if (_thour_rotation < alarm_initial_angle) {
+                                    hourhand_anime_rotation = _thour_rotation + 360;
+                                } else {
+                                    hourhand_anime_rotation = _thour_rotation;
+                                }    
+                            } else if (_thour >= 12)  {
+                                _thour_rotation += 180;
+                                if (_thour_rotation%360 < alarm_initial_angle)  {
+                                    hourhand_anime_rotation = _thour_rotation;
+                                } else {
+                                    hourhand_anime_rotation = _thour_rotation - 360;
+                                }
+                            } else {
+                                _thour_rotation += 180;
+                                if (_thour_rotation < alarm_initial_angle) {
+                                    hourhand_anime_rotation = _thour_rotation + 360;
+                                } else {
+                                    hourhand_anime_rotation = _thour_rotation;
+                                }
                             }
-                            
+                            // if (_thour >= 18) {
+                            //     let temp = (15*(_thour-12)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
+                            //     if (temp < alarm_initial_angle)
+                            //         hourhand_anime_rotation = temp + 360;
+                            //     else
+                            //         hourhand_anime_rotation = temp;
+                            // } else if (_thour >= 12) {
+                            //     let temp = (180+15*(_thour)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
+                            //     if (temp%360 < alarm_initial_angle) 
+                            //         hourhand_anime_rotation = temp;
+                            //     else
+                            //         hourhand_anime_rotation = temp - 360;
+                            // } else  {
+                            //     let temp = (180+15*(_thour)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
+                            //     if (temp < alarm_initial_angle)
+                            //         hourhand_anime_rotation = 360 + temp;
+                            //     else
+                            //         hourhand_anime_rotation = temp;
+                            // }
                             hourhand_anime.direction = direction ? RotationAnimation.Clockwise : RotationAnimation.Counterclockwise;
                             hourhand_anime.start();
                         }
@@ -140,7 +171,6 @@ NVG.Window {
                                 setHanime(widget.settings.alarm["Alarm Time"], direction);
                             }
                             last_time = cfg_alarm;
-                            hour_hand.rotation = hour_hand.rotation%360;
                         }
 
                         P.TimePreference {
