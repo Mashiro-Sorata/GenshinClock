@@ -94,26 +94,26 @@ NVG.Window {
                         function setHanime(time, direction) {
                             let date = new Date(time);
                             let _thour = date.getHours();
-                            let _thour_rotation = (15*(_thour-12)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
+                            let _thour_rotation = (15*_thour+date.getMinutes()*0.25+date.getSeconds()*0.004167);
                             if (_thour >= 18) {
-                                if (_thour_rotation < alarm_initial_angle) {
-                                    hourhand_anime_rotation = _thour_rotation + 360;
+                                if ((_thour_rotation-180) < alarm_initial_angle) {
+                                    hourhand_anime_rotation = _thour_rotation + 180;
                                 } else {
-                                    hourhand_anime_rotation = _thour_rotation;
+                                    hourhand_anime_rotation = _thour_rotation - 180;
                                 }    
                             } else if (_thour >= 12)  {
-                                _thour_rotation += 180;
-                                if (_thour_rotation%360 < alarm_initial_angle)  {
-                                    hourhand_anime_rotation = _thour_rotation;
+                                // _thour_rotation += 180;
+                                if ((_thour_rotation+180)%360 < alarm_initial_angle)  {
+                                    hourhand_anime_rotation = _thour_rotation + 180;
                                 } else {
-                                    hourhand_anime_rotation = _thour_rotation - 360;
+                                    hourhand_anime_rotation = _thour_rotation - 180;
                                 }
                             } else {
-                                _thour_rotation += 180;
-                                if (_thour_rotation < alarm_initial_angle) {
-                                    hourhand_anime_rotation = _thour_rotation + 360;
+                                // _thour_rotation += 180;
+                                if ((_thour_rotation+180) < alarm_initial_angle) {
+                                    hourhand_anime_rotation = _thour_rotation + 540;
                                 } else {
-                                    hourhand_anime_rotation = _thour_rotation;
+                                    hourhand_anime_rotation = _thour_rotation + 180;
                                 }
                             }
                             // if (_thour >= 18) {
@@ -154,7 +154,7 @@ NVG.Window {
                                 } else if (cfg_alarm > last_time && last_time >= initial_time) {
                                     direction = true;
                                 } else if (last_time > cfg_alarm && cfg_alarm >= initial_time) {
-                                     direction = false;
+                                    direction = false;
                                 } else if (initial_time >= cfg_alarm, cfg_alarm > last_time) {
                                     direction = true;
                                 } else if (initial_time >= last_time, last_time > cfg_alarm) {
