@@ -46,9 +46,6 @@ NVG.Window {
                 hourhand_anime.direction = RotationAnimation.Clockwise;
                 minhand_anime_rotation = (hour_hand.rotation + 180) % 360;
                 minhand_anime.start();
-                // handAnimeRotation();
-                // alarm_modify = false;
-                // alarm_dialog_completed = false;
             }
         }
 
@@ -120,25 +117,6 @@ NVG.Window {
                                     hourhand_anime_rotation = _thour_rotation;
                                 }
                             }
-                            // if (_thour >= 18) {
-                            //     let temp = (15*(_thour-12)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
-                            //     if (temp < alarm_initial_angle)
-                            //         hourhand_anime_rotation = temp + 360;
-                            //     else
-                            //         hourhand_anime_rotation = temp;
-                            // } else if (_thour >= 12) {
-                            //     let temp = (180+15*(_thour)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
-                            //     if (temp%360 < alarm_initial_angle) 
-                            //         hourhand_anime_rotation = temp;
-                            //     else
-                            //         hourhand_anime_rotation = temp - 360;
-                            // } else  {
-                            //     let temp = (180+15*(_thour)+date.getMinutes()*0.25+date.getSeconds()*0.004167);
-                            //     if (temp < alarm_initial_angle)
-                            //         hourhand_anime_rotation = 360 + temp;
-                            //     else
-                            //         hourhand_anime_rotation = temp;
-                            // }
                             hourhand_anime.direction = direction ? RotationAnimation.Clockwise : RotationAnimation.Counterclockwise;
                             hourhand_anime.start();
                         }

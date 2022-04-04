@@ -32,7 +32,7 @@
                 "en": "Genshin Clock Widget",
                 "zh": "原神时钟挂件"
             },
-            "preview": "preview.png",
+            "preview": "Preview/MainClock.png",
             "entry": "qml/MainClock.qml"
         },
         {
@@ -42,6 +42,7 @@
                 "en": "Genshin Text Clock Widget",
                 "zh": "原神文字时钟挂件"
             },
+            "preview": "Preview/TextClock.png",
             "entry": "qml/TextClock.qml"
         }
     ]

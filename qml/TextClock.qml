@@ -16,15 +16,13 @@ T.Widget {
     solid: true
     title: qsTr("Genshin Text Clock Widget")
 
-//    action:
-
     property real thour: 0
     property real t12hour: 0
     property real tmin: 0
     property real tsec: 0
     property real tmsec: 0
 
-    readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Full Clock":false}
+    readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Full Clock":true, "Font Color": "#000000"}
 
 
     Item {
@@ -61,7 +59,7 @@ T.Widget {
 
         Text {
             anchors.centerIn: parent
-            color: "white"
+            color: configs["Font Color"]
             text: configs["Full Clock"] ? ("0"+thour).slice(-2) + ":" + ("0"+tmin).slice(-2) : ("0"+t12hour).slice(-2) + ":" + ("0"+tmin).slice(-2)
             font.pointSize: 40
             font.family: genshinFont.name
@@ -98,7 +96,7 @@ T.Widget {
             title: qsTr("Text Clock Settings")
             visible: true
             minimumWidth: 380
-            minimumHeight: 300
+            minimumHeight: 500
             width: minimumWidth
             height: minimumHeight
 
@@ -161,7 +159,13 @@ T.Widget {
                                     label: qsTr("24 Hour Clock")
                                     visible: !_cfg_genshin_style.value
                                     enabled: visible
-                                    defaultValue: false
+                                    defaultValue: true
+                                }
+
+                                P.ColorPreference {
+                                    name: "Font Color"
+                                    label: qsTr("Font Color")
+                                    defaultValue: "#000000"
                                 }
 
                                 Component.onCompleted: {

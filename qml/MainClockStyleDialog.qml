@@ -11,7 +11,7 @@ NVG.Window {
     visible: true
     x: widget.NVG.View.x + widget.width
     y: widget.NVG.View.y
-    minimumWidth: 450
+    minimumWidth: 500
     minimumHeight: 500
     width: minimumWidth
     height: minimumHeight
@@ -26,6 +26,7 @@ NVG.Window {
 
         header: TitleBar {
             text: qsTr("Clock Settings")
+            font.family: genshinFont.name
 
             standardButtons: Dialog.Save | Dialog.Reset
 
@@ -65,6 +66,7 @@ NVG.Window {
                         Layout.fillWidth: true
 
                         label: qsTr("Configuration")
+                        font.family: genshinFont.name
 
                         onPreferenceEdited: {
                             widget.settings.styles = rootPreference.save();
