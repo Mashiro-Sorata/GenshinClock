@@ -18,7 +18,7 @@ T.Widget {
     property real tmin: 0
     property real tsec: 0
 
-    readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Performance and Effectiveness":0,"Performance Settings":{"FPS of Gears":10,"Particle Speed":30,"Particle Visible":true},"Genshin Style":true,"Full Clock":false,"Single Clock Hand":true,"Reverse Clock Hand":false,"Background Visible":true,"Background Opacity":100,"Gear Opacity":55}
+    readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Performance and Effectiveness":0,"Performance Settings":{"FPS of Gears":10,"Particle Speed":30,"Particle Visible":true},"Genshin Style":true,"Full Clock":false,"Single Clock Hand":true,"Swap Clock Hand":false,"Background Visible":true,"Background Opacity":100,"Gear Opacity":55}
     readonly property var alarms: widget.settings.alarm ? widget.settings.alarm : {}
     readonly property real gear_opacity: configs["Gear Opacity"]/100
 
@@ -161,7 +161,7 @@ T.Widget {
                     from: 1080
                     to: 0
                     duration: 90000
-                    running: widget.NVG.View.exposed && !configs["Performance and Effectiveness"]
+                    running: widget.NVG.View.exposed && configs["Performance and Effectiveness"]
                     loops: Animation.Infinite
                 }
             }
@@ -231,8 +231,8 @@ T.Widget {
                 source: "../Images/star_particles.gif"
                 anchors.centerIn: parent
                 rotation: 360*Math.random()
-                speed: !configs["Performance and Effectiveness"] ? 1 : configs["Performance Settings"]["Particle Speed"]/100
-                visible: configs["Performance Settings"]["Particle Visible"]
+                speed: configs["Performance and Effectiveness"] ? 1 : configs["Performance Settings"]["Particle Speed"]/100
+                visible: !configs["Performance and Effectiveness"] ? configs["Performance Settings"]["Particle Visible"] : true
                 playing: visible
             }
         }
@@ -373,7 +373,7 @@ T.Widget {
 
     Timer {
         interval: Math.round(1000/configs["Performance Settings"]["FPS of Gears"])
-        running: widget.NVG.View.exposed && configs["Performance and Effectiveness"]
+        running: widget.NVG.View.exposed && !configs["Performance and Effectiveness"]
         repeat: true
         onTriggered: {
             g0_rotation -= 1080*interval/90000;
@@ -437,7 +437,7 @@ T.Widget {
             }
         } else {
             const full_clock = configs["Full Clock"];
-            if (!configs["Reverse Clock Hand"]) {
+            if (!configs["Swap Clock Hand"]) {
                 minhand_anime_rotation = (180+tmin*6+tsec*0.1) % 360;
                 hourhand_anime_rotation = ((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
             } else {
@@ -490,7 +490,7 @@ T.Widget {
                     }
                 } else {
                     const full_clock = configs["Full Clock"];
-                    if (!configs["Reverse Clock Hand"]) {
+                    if (!configs["Swap Clock Hand"]) {
                         min_hand.rotation = 180+tmin*6+tsec*0.1;
                         hour_hand.rotation = ((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
                     } else {

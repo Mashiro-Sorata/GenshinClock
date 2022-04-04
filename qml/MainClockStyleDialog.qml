@@ -85,7 +85,7 @@ NVG.Window {
                             label: qsTr("Performance Settings")
                             live: true
                             icon.name: "regular:\uf1de"
-                            enabled: _cfg_priority_mode.value == 1
+                            enabled: _cfg_priority_mode.value == 0
 
                             P.SliderPreference {
                                 name: "FPS of Gears"
@@ -143,8 +143,8 @@ NVG.Window {
                         }
 
                         P.SwitchPreference {
-                            name: "Reverse Clock Hand"
-                            label: qsTr("Reverse Clock Hand")
+                            name: "Swap Clock Hand"
+                            label: qsTr("Swap Clock Hand")
                             visible: !_cfg_genshin_style.value
                             enabled: visible
                             defaultValue: false

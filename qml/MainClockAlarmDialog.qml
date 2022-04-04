@@ -7,7 +7,7 @@ import NERvGear.Preferences 1.0 as P
 
 NVG.Window {
     id: window
-    title: qsTr("Alarm Settings")
+    title: qsTr("Alarm Clock Settings")
     visible: true
     x: widget.NVG.View.x + widget.width
     y: widget.NVG.View.y
@@ -33,7 +33,7 @@ NVG.Window {
         anchors.fill: parent
 
         header: TitleBar {
-            text: qsTr("Alarm Settings")
+            text: qsTr("Alarm Clock Settings")
             font.family: genshinFont.name
 
             standardButtons: Dialog.Save
