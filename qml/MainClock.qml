@@ -30,6 +30,8 @@ T.Widget {
     property real hourhand_anime_rotation: 0
     property real minhand_anime_rotation: 0
     property real alarm_initial_angle: 0
+    property bool alarm_dialog_completed: false
+    property bool alarm_close_anime_start: false
 
     FontLoader {
         id: genshinFont;
@@ -164,29 +166,63 @@ T.Widget {
                 }
             }
 
-            Rectangle {
-                width: 536
-                height: 536
-                anchors.centerIn: parent
-                color: "transparent"
-                layer.enabled: true
-                layer.effect: OpacityMask{
-                    maskSource: Image{
-                        width: 536
-                        height: 536
-                        source: "../Images/UI_Clock_TimeZone.png"
+           Rectangle {
+               width: 536
+               height: 536
+               anchors.centerIn: parent
+               color: "transparent"
+               visible: alarm_dialog_completed
+               layer.enabled: true
+               layer.effect: OpacityMask{
+                    maskSource: rainbow_mask
+               }
+
+               Canvas {
+                    id: rainbow_mask
+                    contextType: "2d"
+                    anchors.fill: parent
+                    visible: false
+                    onPaint: {
+                        context.reset();
+                        const cX = width/2;
+                        const cY = height/2;
+                        context.beginPath();
+                        context.fillStyle = "white";
+                        context.moveTo(cX, cY);
+                        if (alarm_close_anime_start) {
+                            context.arc(cX, cY, width, (90+min_hand.rotation)%360/180*Math.PI, (hour_hand.rotation+270)%360/180*Math.PI, false);
+                        } else {
+                            context.arc(cX, cY, width, (270+alarm_initial_angle)%360/180*Math.PI, (hour_hand.rotation+270)%360/180*Math.PI, false);
+                        }
+                        context.lineTo(cX, cY);
+                        context.fill();
                     }
                 }
 
-                Image {
-                    width: 1200
-                    height: 1200
-                    cache: true
-                    anchors.centerIn: parent
-                    source: "../Images/UI_Clock_TimeZoneColor.png"
-                    autoTransform: true
-                }
-            }
+               Rectangle {
+                   width: 536
+                   height: 536
+                   anchors.centerIn: parent
+                   color: "transparent"
+                   layer.enabled: true
+                   layer.effect: OpacityMask{
+                       maskSource: Image{
+                           width: 536
+                           height: 536
+                           source: "../Images/UI_Clock_TimeZone.png"
+                       }
+                   }
+
+                   Image {
+                       width: 1200
+                       height: 1200
+                       cache: true
+                       anchors.centerIn: parent
+                       source: "../Images/UI_Clock_TimeZoneColor.png"
+                       autoTransform: true
+                   }
+               }
+           }
 
             AnimatedImage {
                 width: 540
@@ -273,7 +309,12 @@ T.Widget {
             cache: true
             anchors.centerIn: parent
             source: "../Images/UI_Clock_MinuteHand.png"
-            visible: !(configs["Genshin Style"] && configs["Single Clock Hand"]) || alarm_modify
+            visible: !(configs["Genshin Style"] && configs["Single Clock Hand"]) || alarm_dialog_completed
+
+            onRotationChanged: {
+                if (alarm_dialog_completed)
+                    rainbow_mask.requestPaint();
+            }
         }
 
         Image {
@@ -284,6 +325,11 @@ T.Widget {
             anchors.centerIn: parent
             source: "../Images/UI_Clock_HourHand.png"
 
+            onRotationChanged: {
+                if (alarm_dialog_completed)
+                    rainbow_mask.requestPaint();
+            }
+
             Rectangle {
                 x: 452-15
                 y: 274-40
@@ -293,18 +339,17 @@ T.Widget {
                 opacity: 0.5
                 MouseArea {
                     anchors.fill: parent
-                    cursorShape: (alarm_modify && pressed) ? Qt.SizeAllCursor : Qt.ArrowCursor
-                    enabled: alarm_modify && !hourhand_anime.running
+                    cursorShape: (alarm_dialog_completed && pressed) ? Qt.SizeAllCursor : Qt.ArrowCursor
+                    enabled: alarm_dialog_completed && !hourhand_anime.running
                     onPositionChanged: {
-                        if (!alarm_modify)
+                        if (!alarm_dialog_completed)
                             return;
                         if (!pressed)
                             return;
-                        let point = mapToItem(hour_hand, mouse.x, mouse.y);
-                        let diffX = (point.x - hour_hand.width/2);
-                        let diffY = -1 * (point.y - hour_hand.height/2);
-                        let rad = Math.atan (diffY/diffX);
-                        let deg = (rad * 180/Math.PI);
+                        const point = mapToItem(hour_hand, mouse.x, mouse.y);
+                        const diffX = (point.x - hour_hand.width/2);
+                        const diffY = -1 * (point.y - hour_hand.height/2);
+                        const deg = (Math.atan (diffY/diffX) * 180/Math.PI);
                         let delta_deg = 0;
                         if (diffX > 0) {
                             delta_deg = 90 - Math.abs (deg);
@@ -339,6 +384,14 @@ T.Widget {
 
     }
 
+    function wait_for_alarm_cfg_done() {
+        if (alarm_modify) {
+            if (!alarm_dialog_completed) {
+                alarm_dialog_completed = true;
+            }
+        }
+    }
+
     RotationAnimation{
         id: hourhand_anime
         target: hour_hand
@@ -346,6 +399,11 @@ T.Widget {
         easing.type: Easing.InOutQuad
         duration: 600
         running: false
+        onRunningChanged: {
+            if (!running) {
+                wait_for_alarm_cfg_done();
+            }
+        }
     }
 
     RotationAnimation{
@@ -355,6 +413,18 @@ T.Widget {
         easing.type: Easing.InOutQuad
         duration: 600
         running: false
+        direction: RotationAnimation.Clockwise
+        onRunningChanged: {
+            if (!running) {
+                wait_for_alarm_cfg_done();
+                if (alarm_close_anime_start) {
+                    handAnimeRotation();
+                    alarm_modify = false;
+                    alarm_dialog_completed = false;
+                    alarm_close_anime_start = false;
+                }
+            }
+        }
     }
 
     function handAnimeRotation() {
@@ -366,7 +436,7 @@ T.Widget {
                 minhand_anime_rotation = tmin*6+tsec*0.1;
             }
         } else {
-            let full_clock = configs["Full Clock"];
+            const full_clock = configs["Full Clock"];
             if (!configs["Reverse Clock Hand"]) {
                 minhand_anime_rotation = (180+tmin*6+tsec*0.1) % 360;
                 hourhand_anime_rotation = ((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
@@ -377,7 +447,6 @@ T.Widget {
         }
         hourhand_anime.direction = RotationAnimation.Shortest;
         hourhand_anime.start();
-        minhand_anime.direction = RotationAnimation.Shortest;
         minhand_anime.start();
     }
 
@@ -389,11 +458,28 @@ T.Widget {
         interval: 500
         running: widget.NVG.View.exposed && !hourhand_anime.running && !minhand_anime.running
         repeat: true
+        readonly property real alarm_hour: {
+            const date = new Date(alarms["Alarm Time"]);
+            return date.getHours()
+        }
+        readonly property real alarm_minute: {
+            const date = new Date(alarms["Alarm Time"]);
+            return date.getMinutes()
+        }
+        property bool next_task: true
         onTriggered: {
             var now = new Date();
             tsec = now.getSeconds();
             tmin = now.getMinutes();
             thour = now.getHours();
+            if (tmin==alarm_minute && thour==alarm_hour && next_task) {
+                if (alarms["Enable Task"] && action.status) {
+                    action.trigger(widget);
+                    next_task = false;
+                }
+            } else if (!next_task && tmin!=alarm_minute) {
+                next_task = true;
+            }
             if (!alarm_modify) {
                 if (configs["Genshin Style"]) {
                     if (configs["Single Clock Hand"]) {
@@ -403,7 +489,7 @@ T.Widget {
                         min_hand.rotation = tmin*6+tsec*0.1;
                     }
                 } else {
-                    let full_clock = configs["Full Clock"];
+                    const full_clock = configs["Full Clock"];
                     if (!configs["Reverse Clock Hand"]) {
                         min_hand.rotation = 180+tmin*6+tsec*0.1;
                         hour_hand.rotation = ((!full_clock)*30+full_clock*15)*thour+tmin*(0.5-full_clock*0.25)+tsec*(0.01-0.0058333*full_clock);
@@ -412,8 +498,6 @@ T.Widget {
                         hour_hand.rotation = tmin*6+tsec*0.1;
                     }
                 }
-            } else {
-//                configs["Alarm Time"]
             }
         }
     }
@@ -432,9 +516,8 @@ T.Widget {
             enabled: !styleDialog.active
             onTriggered: {
                 alarmDialog.active = true;
-                let date = new Date(alarms["Alarm Time"]);
+                const date = new Date(alarms["Alarm Time"]);
                 minhand_anime_rotation = (15*date.getHours()+date.getMinutes()*0.25+date.getSeconds()*0.004167) % 360;
-                minhand_anime.direction = RotationAnimation.Shortest;
                 minhand_anime.start();
                 hourhand_anime_rotation = (180+minhand_anime_rotation) % 360;
                 hourhand_anime.direction = RotationAnimation.Shortest;
@@ -454,5 +537,10 @@ T.Widget {
         id: styleDialog
         active: false
         sourceComponent: MainClockStyleDialog {}
+    }
+
+    NVG.ActionSource {
+        id: action
+        configuration: alarms["action"]
     }
 }
