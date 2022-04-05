@@ -21,6 +21,7 @@ T.Widget {
     property real tmin: 0
     property real tsec: 0
     property real tmsec: 0
+    editing: styleDialog.active
 
     readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Full Clock":true, "Font Color": "#000000"}
 

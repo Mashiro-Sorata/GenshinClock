@@ -157,8 +157,8 @@ NVG.Window {
 
                         P.TimePreference {
                             name: "Alarm Time"
-                            label: "Alarm Time"
-                            message: "Tips: Drag the hour hand to set alarm time."
+                            label: qsTr("Alarm Time")
+                            message: qsTr("Tips: Drag the hour hand to set alarm time.")
                             font.family: genshinFont.name
                         }
 
