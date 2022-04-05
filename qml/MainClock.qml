@@ -32,6 +32,7 @@ T.Widget {
     property real alarm_initial_angle: 0
     property bool alarm_dialog_completed: false
     property bool alarm_close_anime_start: false
+    property bool initial_visible: false
 
     FontLoader {
         id: genshinFont;
@@ -309,7 +310,7 @@ T.Widget {
             cache: true
             anchors.centerIn: parent
             source: "../Images/UI_Clock_MinuteHand.png"
-            visible: !(configs["Genshin Style"] && configs["Single Clock Hand"]) || alarm_dialog_completed
+            visible: initial_visible && !(configs["Genshin Style"] && configs["Single Clock Hand"]) || alarm_dialog_completed
 
             onRotationChanged: {
                 if (alarm_dialog_completed)
@@ -324,7 +325,7 @@ T.Widget {
             cache: true
             anchors.centerIn: parent
             source: "../Images/UI_Clock_HourHand.png"
-
+            visible: initial_visible
             onRotationChanged: {
                 if (alarm_dialog_completed)
                     rainbow_mask.requestPaint();
@@ -499,6 +500,8 @@ T.Widget {
                     }
                 }
             }
+            if (!initial_visible)
+                initial_visible = true;
         }
     }
 
