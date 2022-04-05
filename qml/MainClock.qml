@@ -215,8 +215,8 @@ T.Widget {
                    }
 
                    Image {
-                       width: 1200
-                       height: 1200
+                       width: 536
+                       height: 536
                        cache: true
                        anchors.centerIn: parent
                        source: "../Images/UI_Clock_TimeZoneColor.png"
