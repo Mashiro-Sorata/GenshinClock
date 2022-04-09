@@ -111,6 +111,7 @@ T.Widget {
 
                 header: TitleBar {
                     text: qsTr("Text Clock Settings")
+                    font.family: genshinFont.name
 
                     standardButtons: Dialog.Save | Dialog.Reset
 
@@ -150,6 +151,7 @@ T.Widget {
                                 Layout.fillWidth: true
 
                                 label: qsTr("Configuration")
+                                font.family: genshinFont.name
 
                                 onPreferenceEdited: {
                                     widget.settings.styles = rootPreference.save();
@@ -158,8 +160,6 @@ T.Widget {
                                 P.SwitchPreference {
                                     name: "Full Clock"
                                     label: qsTr("24 Hour Clock")
-                                    visible: !_cfg_genshin_style.value
-                                    enabled: visible
                                     defaultValue: true
                                 }
 

@@ -234,7 +234,7 @@ T.Widget {
                 rotation: 360*Math.random()
                 speed: configs["Performance and Effectiveness"] ? 1 : configs["Performance Settings"]["Particle Speed"]/100
                 visible: !configs["Performance and Effectiveness"] ? configs["Performance Settings"]["Particle Visible"] : true
-                playing: visible
+                playing: visible && widget.NVG.View.exposed
             }
         }
 
@@ -407,7 +407,7 @@ T.Widget {
         }
     }
 
-    RotationAnimation{
+    RotationAnimation {
         id: minhand_anime
         target: min_hand
         to: minhand_anime_rotation

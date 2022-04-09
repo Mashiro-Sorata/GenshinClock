@@ -77,7 +77,7 @@ NVG.Window {
                             name: "Performance and Effectiveness"
                             label: qsTr("Performance and Effectiveness")
                             defaultValue: 0
-                             model: [qsTr("Effectiveness First"), qsTr("Performance First")]
+                            model: [qsTr("Effectiveness First"), qsTr("Performance First")]
                         }
 
                         P.DialogPreference {
@@ -90,6 +90,7 @@ NVG.Window {
                             P.SliderPreference {
                                 name: "FPS of Gears"
                                 label: qsTr("FPS of Gears")
+                                font.family: genshinFont.name
                                 from: 1
                                 to: 60
                                 stepSize: 1
@@ -100,6 +101,7 @@ NVG.Window {
                             P.SliderPreference {
                                 name: "Particle Speed"
                                 label: qsTr("Particle Speed")
+                                font.family: genshinFont.name
                                 from: 1
                                 to: 100
                                 stepSize: 1
@@ -112,6 +114,7 @@ NVG.Window {
                                 id: _cfg_particle_visible
                                 name: "Particle Visible"
                                 label: qsTr("Particle Visible")
+                                font.family: genshinFont.name
                                 defaultValue: true
                             }
                         }
