@@ -34,7 +34,6 @@ NVG.Window {
 
         header: TitleBar {
             text: qsTr("Alarm Clock Settings")
-            font.family: genshinFont.name
 
             standardButtons: Dialog.Save
 
@@ -60,7 +59,6 @@ NVG.Window {
                 anchors.topMargin: 10
                 text: qsTr("Last Time")
                 font.pixelSize: 24
-                font.family: genshinFont.name
             }
 
             Label {
@@ -71,7 +69,6 @@ NVG.Window {
                     return ("0"+date.getHours()).slice(-2) + ":" + ("0"+date.getMinutes()).slice(-2);
                 }
                 font.pixelSize: 24
-                font.family: genshinFont.name
             }
 
             Flickable {
@@ -89,7 +86,6 @@ NVG.Window {
                     P.PreferenceGroup {
                         id: rootPreference
                         Layout.fillWidth: true
-                        font.family: genshinFont.name
 
                         function setHanime(time, direction) {
                             const date = new Date(time);
@@ -159,7 +155,6 @@ NVG.Window {
                             name: "Alarm Time"
                             label: qsTr("Alarm Time")
                             message: qsTr("Tips: Drag the hour hand to set alarm time.")
-                            font.family: genshinFont.name
                         }
 
                         P.Separator {}

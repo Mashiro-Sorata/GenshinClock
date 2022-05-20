@@ -26,7 +26,6 @@ NVG.Window {
 
         header: TitleBar {
             text: qsTr("Clock Settings")
-            font.family: genshinFont.name
 
             standardButtons: Dialog.Save | Dialog.Reset
 
@@ -64,9 +63,7 @@ NVG.Window {
                     P.PreferenceGroup {
                         id: rootPreference
                         Layout.fillWidth: true
-
                         label: qsTr("Configuration")
-                        font.family: genshinFont.name
 
                         onPreferenceEdited: {
                             widget.settings.styles = rootPreference.save();
@@ -76,7 +73,7 @@ NVG.Window {
                             id: _cfg_priority_mode
                             name: "Performance and Effectiveness"
                             label: qsTr("Performance and Effectiveness")
-                            defaultValue: 0
+                            defaultValue: defaultValues["Performance and Effectiveness"]
                             model: [qsTr("Effectiveness First"), qsTr("Performance First")]
                         }
 
@@ -90,22 +87,20 @@ NVG.Window {
                             P.SliderPreference {
                                 name: "FPS of Gears"
                                 label: qsTr("FPS of Gears")
-                                font.family: genshinFont.name
                                 from: 1
                                 to: 60
                                 stepSize: 1
-                                defaultValue: 10
+                                defaultValue: defaultValues["Performance Settings"]["FPS of Gears"]
                                 displayValue: value + " fps"
                             }
 
                             P.SliderPreference {
                                 name: "Particle Speed"
                                 label: qsTr("Particle Speed")
-                                font.family: genshinFont.name
                                 from: 1
                                 to: 100
                                 stepSize: 1
-                                defaultValue: 30
+                                defaultValue: defaultValues["Performance Settings"]["Particle Speed"]
                                 displayValue: value + "%"
                                 enabled: _cfg_particle_visible.value
                             }
@@ -114,8 +109,7 @@ NVG.Window {
                                 id: _cfg_particle_visible
                                 name: "Particle Visible"
                                 label: qsTr("Particle Visible")
-                                font.family: genshinFont.name
-                                defaultValue: true
+                                defaultValue: defaultValues["Performance Settings"]["Particle Visible"]
                             }
                         }
 
@@ -125,7 +119,7 @@ NVG.Window {
                             id: _cfg_genshin_style
                             name: "Genshin Style"
                             label: qsTr("Genshin Style")
-                            defaultValue: true
+                            defaultValue: defaultValues["Genshin Style"]
                         }
 
                         P.SwitchPreference {
@@ -133,7 +127,7 @@ NVG.Window {
                             label: qsTr("24 Hour Clock")
                             visible: !_cfg_genshin_style.value
                             enabled: visible
-                            defaultValue: false
+                            defaultValue: defaultValues["Full Clock"]
                         }
 
                         P.SwitchPreference {
@@ -142,7 +136,7 @@ NVG.Window {
                             label: qsTr("Single Clock Hand")
                             visible: _cfg_genshin_style.value
                             enabled: visible
-                            defaultValue: true
+                            defaultValue: defaultValues["Single Clock Hand"]
                         }
 
                         P.SwitchPreference {
@@ -150,14 +144,14 @@ NVG.Window {
                             label: qsTr("Swap Clock Hand")
                             visible: !_cfg_genshin_style.value
                             enabled: visible
-                            defaultValue: false
+                            defaultValue: defaultValues["Swap Clock Hand"]
                         }
 
                         P.SwitchPreference {
                             id: _cfg_bg_visible
                             name: "Background Visible"
                             label: qsTr("Background Visible")
-                            defaultValue: true
+                            defaultValue: defaultValues["Background Visible"]
                         }
 
                         P.SliderPreference {
@@ -167,7 +161,7 @@ NVG.Window {
                             from: 1
                             to: 100
                             stepSize: 1
-                            defaultValue: 100
+                            defaultValue: defaultValues["Background Opacity"]
                             displayValue: value + "%"
                         }
 
@@ -177,15 +171,11 @@ NVG.Window {
                             from: 1
                             to: 100
                             stepSize: 1
-                            defaultValue: 55
+                            defaultValue: defaultValues["Gear Opacity"]
                             displayValue: value + "%"
                         }
 
                         Component.onCompleted: {
-                            if(!widget.settings.styles) {
-                                configuration = rootPreference.save();
-                                widget.settings.styles = configuration;
-                            }
                             rootPreference.load(widget.settings.styles);
                             configuration = widget.settings.styles;
                         }

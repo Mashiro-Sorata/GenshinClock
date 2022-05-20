@@ -10,21 +10,31 @@ import NERvGear.Templates 1.0 as T
 import NERvGear.Preferences 1.0 as P
 
 
-T.Widget {
+WidgetTemplate {
     id: widget
-    visible: true
-    solid: true
     title: qsTr("Genshin Text Clock Widget")
+    editing: styleDialog.active
+
+    version: "1.0.0"
+    defaultValues:{
+        "Full Clock": true,
+        "Font Name": fonts.length - 1,
+        "Font Weight": 1,
+        "Font Color": "#000000"
+    }
+
+    readonly property var configs: widget.settings.styles
+
+    readonly property var fonts: Qt.fontFamilies().sort()
+    readonly property var fontweight: [Font.Light, Font.Normal, Font.Bold]
+    readonly property var sfontweight: [qsTr("Light"), qsTr("Normal"), qsTr("Bold")]
+
 
     property real thour: 0
     property real t12hour: 0
     property real tmin: 0
     property real tsec: 0
     property real tmsec: 0
-    editing: styleDialog.active
-
-    readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Full Clock":true, "Font Color": "#000000"}
-
 
     Item {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -53,17 +63,13 @@ T.Widget {
             rotation: 180
         }
 
-        FontLoader {
-            id: genshinFont;
-            source: "../Fonts/hk4e_zh-cn.ttf"
-        }
-
         Text {
             anchors.centerIn: parent
             color: configs["Font Color"]
             text: configs["Full Clock"] ? ("0"+thour).slice(-2) + ":" + ("0"+tmin).slice(-2) : ("0"+t12hour).slice(-2) + ":" + ("0"+tmin).slice(-2)
             font.pointSize: 40
-            font.family: genshinFont.name
+            font.family: fonts[configs["Font Name"]]
+            font.weight: fontweight[configs["Font Weight"]]
         }
     }
 
@@ -111,7 +117,6 @@ T.Widget {
 
                 header: TitleBar {
                     text: qsTr("Text Clock Settings")
-                    font.family: genshinFont.name
 
                     standardButtons: Dialog.Save | Dialog.Reset
 
@@ -151,7 +156,6 @@ T.Widget {
                                 Layout.fillWidth: true
 
                                 label: qsTr("Configuration")
-                                font.family: genshinFont.name
 
                                 onPreferenceEdited: {
                                     widget.settings.styles = rootPreference.save();
@@ -160,20 +164,30 @@ T.Widget {
                                 P.SwitchPreference {
                                     name: "Full Clock"
                                     label: qsTr("24 Hour Clock")
-                                    defaultValue: true
+                                    defaultValue: defaultValues["Full Clock"]
+                                }
+
+                                P.SelectPreference {
+                                    name: "Font Name"
+                                    label: qsTr("Font Style")
+                                    defaultValue: defaultValues["Font Name"]
+                                    model: fonts
+                                }
+
+                                P.SelectPreference {
+                                    name: "Font Weight"
+                                    label: qsTr("Font Weight")
+                                    defaultValue: defaultValues["Font Weight"]
+                                    model: sfontweight
                                 }
 
                                 P.ColorPreference {
                                     name: "Font Color"
                                     label: qsTr("Font Color")
-                                    defaultValue: "#000000"
+                                    defaultValue: defaultValues["Font Color"]
                                 }
 
                                 Component.onCompleted: {
-                                    if(!widget.settings.styles) {
-                                        configuration = rootPreference.save();
-                                        widget.settings.styles = configuration;
-                                    }
                                     rootPreference.load(widget.settings.styles);
                                     configuration = widget.settings.styles;
                                 }

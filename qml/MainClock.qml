@@ -8,18 +8,34 @@ import NERvGear.Controls 1.0
 import NERvGear.Templates 1.0 as T
 
 
-T.Widget {
+WidgetTemplate {
     id: widget
-    visible: true
-    solid: true
     title: qsTr("Genshin Clock Widget")
+    editing: styleDialog.active
+
+    version: "1.0.0"
+    defaultValues: {
+        "Performance and Effectiveness": 0,
+        "Performance Settings": {
+            "FPS of Gears": 10,
+            "Particle Speed": 30,
+            "Particle Visible": true
+        },
+        "Genshin Style": true,
+        "Full Clock": false,
+        "Single Clock Hand": true,
+        "Swap Clock Hand": false,
+        "Background Visible": true,
+        "Background Opacity": 100,
+        "Gear Opacity": 55
+    }
 
     property real thour: 0
     property real tmin: 0
     property real tsec: 0
 
-    readonly property var configs: widget.settings.styles ? widget.settings.styles : {"Performance and Effectiveness":0,"Performance Settings":{"FPS of Gears":10,"Particle Speed":30,"Particle Visible":true},"Genshin Style":true,"Full Clock":false,"Single Clock Hand":true,"Swap Clock Hand":false,"Background Visible":true,"Background Opacity":100,"Gear Opacity":55}
-    readonly property var alarms: widget.settings.alarm ? widget.settings.alarm : {}
+    readonly property var configs: widget.settings.styles
+    readonly property var alarms: widget.settings.alarm ?? {}
     readonly property real gear_opacity: configs["Gear Opacity"]/100
 
     readonly property real mtime: thour*60+tmin
@@ -33,11 +49,6 @@ T.Widget {
     property bool alarm_dialog_completed: false
     property bool alarm_close_anime_start: false
     property bool initial_visible: false
-
-    FontLoader {
-        id: genshinFont;
-        source: "../Fonts/hk4e_zh-cn.ttf"
-    }
 
     Item {
         anchors.fill: parent
@@ -452,7 +463,8 @@ T.Widget {
     }
 
     onConfigsChanged: {
-        handAnimeRotation();
+        if (configs)
+            handAnimeRotation();
     }
 
     Timer {

@@ -1,6 +1,6 @@
 {
     "name": "top.mashiros.widget.genshinclock",
-    "version": "1.2.0",
+    "version": "1.0.0",
     
     "title": {
         "en": "Genshin Clock Widget",
@@ -8,8 +8,8 @@
     },
 
     "description": {
-        "en": "Genshin Style Clock Widget for SAO Utils 2",
-        "zh": "用于SAO Utils 2的原神风格时钟挂件"
+        "en": "A collection of Genshin-style clock widgets, including clocks and alarm clocks, text clocks",
+        "zh": "原神风格时钟挂件合集，包括时钟与闹钟、文字时钟"
     },
 
     "author": {
