@@ -8,14 +8,21 @@
     },
 
     "description": {
-        "en": "A collection of Genshin-style clock widgets, including clocks and alarm clocks, text clocks",
-        "zh": "原神风格时钟挂件合集，包括时钟与闹钟、文字时钟"
+        "en": "A collection of Genshin-style clock widgets, including clocks and alarm clocks, text clocks.",
+        "zh": "原神风格时钟挂件合集，包括时钟与闹钟、文字时钟。"
     },
 
     "author": {
         "name": "Mashiro_Sorata",
         "email": "mashiro_sorata@qq.com",
         "url": "http://www.mashiros.top/"
+    },
+
+    "homepage": "https://github.com/Mashiro-Sorata/GenshinClock",
+
+    "bugs": {
+        "email": "mashiro_sorata@qq.com",
+        "url": "https://github.com/Mashiro-Sorata/GenshinClock/issues"
     },
 
     "engines": {
