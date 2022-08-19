@@ -5,11 +5,13 @@ import NERvGear 1.0 as NVG
 import NERvGear.Controls 1.0
 import NERvGear.Preferences 1.0 as P
 
+import QtQuick.Window 2.2
+
 NVG.Window {
     id: window
     title: qsTr("Clock Settings")
     visible: true
-    x: widget.NVG.View.x + widget.width
+    x: (widget.NVG.View.x + widget.width + width > Screen.width) ? widget.NVG.View.x - width : widget.NVG.View.x + widget.width
     y: widget.NVG.View.y
     minimumWidth: 500
     minimumHeight: 500
